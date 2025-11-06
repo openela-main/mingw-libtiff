@@ -3,11 +3,59 @@
 Summary:        MinGW Windows port of the LibTIFF library
 Name:           mingw-libtiff
 Version:        4.0.9
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        libtiff
 Group:          System Environment/Libraries
 URL:            http://www.simplesystems.org/libtiff/
 Source:         ftp://ftp.simplesystems.org/pub/libtiff/tiff-%{version}.tar.gz
+
+Patch0001: 0001-Back-off-the-minimum-required-automake-version-to-1..patch
+Patch0002: 0002-Fix-Makefile.patch
+Patch0003: 0003-CVE-2018-5784-Fix-for-bug-2772.patch
+Patch0004: 0004-CVE-2018-7456-Fix-NULL-pointer-dereference-in-TIFFPr.patch
+Patch0005: 0005-CVE-2017-9935-tiff2pdf-Fix-CVE-2017-9935.patch
+Patch0006: 0006-CVE-2017-9935-tiff2pdf-Fix-apparent-incorrect-type-f.patch
+Patch0007: 0007-CVE-2017-18013-libtiff-tif_print.c-TIFFPrintDirector.patch
+Patch0008: 0008-CVE-2018-8905-LZWDecodeCompat-fix-potential-index-ou.patch
+Patch0009: 0009-CVE-2018-10963-TIFFWriteDirectorySec-avoid-assertion.patch
+Patch0010: 0010-CVE-2018-17100-avoid-potential-int32-overflows-in-mu.patch
+Patch0011: 0011-CVE-2018-18557-JBIG-fix-potential-out-of-bounds-writ.patch
+Patch0012: 0012-CVE-2018-18661-tiff2bw-avoid-null-pointer-dereferenc.patch
+Patch0013: 0013-bz1602597-Fix-two-resource-leaks.patch
+Patch0014: 0014-CVE-2018-12900-check-that-Tile-Width-Samples-Pixel-d.patch
+Patch0015: 0015-CVE-2019-14973-Fix-integer-overflow-in-_TIFFCheckMal.patch
+Patch0016: 0016-CVE-2019-17546-RGBA-interface-fix-integer-overflow-p.patch
+Patch0017: 0017-CVE-2020-35521-CVE-2020-35522-enforce-configurable-m.patch
+Patch0018: 0018-CVE-2020-35523-gtTileContig-check-Tile-width-for-ove.patch
+Patch0019: 0019-CVE-2020-35524-tiff2pdf.c-properly-calculate-datasiz.patch
+Patch0020: 0020-CVE-2020-19131-tiffcrop.c-fix-invertImage-for-bps-2-.patch
+Patch0021: 0021-CVE-2022-0561-TIFFFetchStripThing-avoid-calling-memc.patch
+Patch0022: 0022-CVE-2022-0562-TIFFReadDirectory-avoid-calling-memcpy.patch
+Patch0023: 0023-CVE-2022-22844-tiffset-fix-global-buffer-overflow-fo.patch
+Patch0024: 0024-CVE-2022-0865-tif_jbig.c-fix-crash-when-reading-a-fi.patch
+Patch0025: 0025-CVE-2022-0891-tiffcrop-fix-issue-380-and-382-heap-bu.patch
+Patch0026: 0026-CVE-2022-0924-fix-heap-buffer-overflow-in-tiffcp-278.patch
+Patch0027: 0027-CVE-2022-0909-fix-the-FPE-in-tiffcrop-393.patch
+Patch0028: 0028-CVE-2022-0908-TIFFFetchNormalTag-avoid-calling-memcp.patch
+Patch0029: 0029-CVE-2022-1355-tiffcp-avoid-buffer-overflow-in-mode-s.patch
+Patch0030: 0030-move-_TIFFClampDoubleToFloat-to-tif_aux.c.patch
+Patch0031: 0031-CVE-2022-2056-CVE-2022-2057-CVE-2022-2058-fix-the-FP.patch
+Patch0032: 0032-CVE-2022-2867-CVE-2022-2868-tiffcrop.c-Fix-issue-352.patch
+Patch0033: 0033-CVE-2022-2519-CVE-2022-2520-CVE-2022-2521-CVE-2022-2.patch
+Patch0034: 0034-CVE-2022-2519-CVE-2022-2520-CVE-2022-2521-CVE-2022-2.patch
+Patch0035: 0035-CVE-2022-3597-CVE-2022-3626-CVE-2022-3627-tiffcrop-d.patch
+Patch0036: 0036-CVE-2022-3970-TIFFReadRGBATileExt-fix-unsigned-integ.patch
+Patch0037: 0037-CVE-2022-48281-tiffcrop-Correct-simple-copy-paste-er.patch
+Patch0038: 0038-CVE-2023-0800-CVE-2023-0801-CVE-2023-0802-CVE-2023-0.patch
+Patch0039: 0039-CVE-2022-3599-Revised-handling-of-TIFFTAG_INKNAMES-a.patch
+Patch0040: 0040-CVE-2018-15209-Merge-branch-avoid_memory_exhaustion_.patch
+Patch0041: 0041-CVE-2023-25433-Merge-branch-tiffcrop_correctly_updat.patch
+Patch0042: 0042-CVE-2023-52356-Merge-branch-fix_622-into-master.patch
+Patch0043: 0043-CVE-2023-6228-Merge-branch-fix_606_tiffcp_check_also.patch
+Patch44:       libtiff-4.6.0-CVE-2024-7006.patch
+Patch45:       libtiff-4.0.9-CVE-2017-17095.patch
+Patch46:       RHEL-112533.patch
+Patch47:       RHEL-120230.patch
 
 BuildArch:      noarch
 ExclusiveArch:  %{ix86} x86_64
@@ -25,6 +73,7 @@ BuildRequires:  mingw64-filesystem >= 95
 BuildRequires:  mingw64-gcc
 BuildRequires:  mingw64-gcc-c++
 BuildRequires:  mingw64-binutils
+BuildRequires:  libtool
 
 
 %description
@@ -84,7 +133,16 @@ Static version of the MinGW Windows LibTIFF library.
 
 
 %prep
-%setup -q -n tiff-%{version}
+%autosetup -p1 -n tiff-%{version}
+
+# Use build system's libtool.m4, not the one in the package.
+rm -f libtool.m4
+
+libtoolize --force  --copy
+aclocal -I . -I m4
+automake --add-missing --copy
+autoconf
+autoheader
 
 
 %build
@@ -141,6 +199,26 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Tue Nov 04 2025 Lili Zhu <lizhu@redhat.com> - 4.0.9-3
+- Fix CVE-2018-5784 CVE-2018-7456 CVE-2017-9935 CVE-2017-9935
+- Fix CVE-2017-18013 CVE-2018-8905 CVE-2018-10963 CVE-2018-17100
+- Fix CVE-2018-18557 CVE-2018-18661 (RHBZ #1602597) CVE-2018-12900
+- Fix CVE-2019-14973 CVE-2019-17546 CVE-2020-35521 CVE-2020-35522
+- Fix CVE-2020-35523 CVE-2020-35524 CVE-2020-19131 CVE-2022-0561
+- Fix CVE-2022-0562 CVE-2022-22844 CVE-2022-0865 CVE-2022-0891
+- Fix CVE-2022-0924 CVE-2022-0909 CVE-2022-0908 CVE-2022-1355
+- Fix CVE-2022-2056 CVE-2022-2057 CVE-2022-2058 CVE-2022-2867
+- Fix CVE-2022-2868 CVE-2022-2519 CVE-2022-2520 CVE-2022-2521
+- Fix CVE-2022-2953 CVE-2022-3597 CVE-2022-3626 CVE-2022-3627
+- Fix CVE-2022-3970 CVE-2022-48281 CVE-2023-0800 CVE-2023-0801
+- Fix CVE-2023-0802 CVE-2023-0803 CVE-2022-3599 CVE-2018-15209
+- Fix CVE-2023-25433 CVE-2023-52356 CVE-2023-6228 CVE-2017-17095
+- Fix CVE-2024-7006
+- Fix CVE-2025-9900
+  Resolves: RHEL-112538
+- Fix CVE-2025-8176
+  Resolves: RHEL-120235
+
 * Thu Aug 16 2018 Eduardo Lima (Etrunko) <etrunko@redhat.com> - 4.0.9-2
 - ExclusiveArch: i686, x86_64
   Related: rhbz#1615874
