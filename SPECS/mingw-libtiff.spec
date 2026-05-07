@@ -3,7 +3,7 @@
 Summary:        MinGW Windows port of the LibTIFF library
 Name:           mingw-libtiff
 Version:        4.0.9
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        libtiff
 Group:          System Environment/Libraries
 URL:            http://www.simplesystems.org/libtiff/
@@ -56,6 +56,7 @@ Patch44:       libtiff-4.6.0-CVE-2024-7006.patch
 Patch45:       libtiff-4.0.9-CVE-2017-17095.patch
 Patch46:       RHEL-112533.patch
 Patch47:       RHEL-120230.patch
+Patch48:       libtiff-4.4.0-CVE-2026-4775.patch
 
 BuildArch:      noarch
 ExclusiveArch:  %{ix86} x86_64
@@ -199,6 +200,10 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Thu Apr 23 2026 Uri Lublin <uril@redhat.com> - 4.0.9-4
+- fix CVE-2026-4775: signed integer overflow in putcontig8bitYCbCr44tile
+  Resolves: RHEL-159337
+
 * Tue Nov 04 2025 Lili Zhu <lizhu@redhat.com> - 4.0.9-3
 - Fix CVE-2018-5784 CVE-2018-7456 CVE-2017-9935 CVE-2017-9935
 - Fix CVE-2017-18013 CVE-2018-8905 CVE-2018-10963 CVE-2018-17100
